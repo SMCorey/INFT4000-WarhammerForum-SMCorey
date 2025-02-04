@@ -12,6 +12,6 @@
         // Foreign key
         public int DiscussionId { get; set; }
 
-        public Discussion? Photo { get; set; }
+        public Discussion? Discussion { get; set; }
     }
 }

@@ -1,4 +1,7 @@
-﻿namespace WarhammerForum.Models
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
+
+namespace WarhammerForum.Models
 {
     public class Discussion
     {
@@ -10,5 +13,10 @@
 
         // Navigation
         public List<Comment>? Comments { get; set; }
+
+        // Property for file upload, not mapped in EF
+        [NotMapped]
+        [Display(Name = "Image")]
+        public IFormFile? ImageFile { get; set; } // nullable!!!
     }
 }

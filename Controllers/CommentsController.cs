@@ -24,9 +24,11 @@ namespace WarhammerForum.Controllers
         // GET: Comments/Details/5
 
         // GET: Comments/Create
-        public IActionResult Create()
+        public IActionResult Create(int discussionId)
         {
-            ViewData["DiscussionId"] = new SelectList(_context.Discussion, "DiscussionId", "DiscussionId");
+            var discussion = _context.Discussion.FirstOrDefault(d => d.DiscussionId == discussionId);
+            ViewData["DiscussionId"] = discussionId;
+            ViewData["DiscussionTitle"] = discussion?.Title ?? "Unknown Discussion";
             return View();
         }
 
@@ -35,13 +37,18 @@ namespace WarhammerForum.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("CommentId,Content,CreateDate,DiscussionId")] Comment comment)
+        public async Task<IActionResult> Create([Bind("CommentId,Content,DiscussionId")] Comment comment)
         {
+            // initialize the datetime property
+            comment.CreateDate = DateTime.Now;
+            var tempID = comment.DiscussionId;
+
             if (ModelState.IsValid)
             {
                 _context.Add(comment);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                // Redirect to the GetDiscussion action in HomeController with the discussion ID
+                return RedirectToAction("GetDiscussion", "Home", new { id = comment.DiscussionId });
             }
             ViewData["DiscussionId"] = new SelectList(_context.Discussion, "DiscussionId", "DiscussionId", comment.DiscussionId);
             return View(comment);

@@ -1,26 +1,46 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
-//using WarhammerForum.Models;
+using Microsoft.EntityFrameworkCore;
+using WarhammerForum.Data;
+using WarhammerForum.Models;
 
 namespace WarhammerForum.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
+        private readonly WarhammerForumContext _context;
 
-        public HomeController()
+        // Constructor
+        public HomeController(WarhammerForumContext content)
         {
-
+            _context = content;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View();
+            // get all discussions
+            var discussions = await _context.Discussion
+                .Include(d => d.Comments)
+                .OrderByDescending(d => d.CreateDate)
+                .ToListAsync();
+            return View(discussions); // pass discussions to list view
         }
-
-        public IActionResult Privacy()
+        public async Task<IActionResult> GetDiscussion(int id)
         {
-            return View();
+            var discussion = await _context.Discussion
+                .Include(d => d.Comments)
+                .FirstOrDefaultAsync(d => d.DiscussionId == id);
+
+            if (discussion == null)
+            {
+                return NotFound();
+            }
+
+            discussion.Comments = discussion.Comments?
+                .OrderByDescending(c => c.CreateDate)
+                .ToList();
+
+            return View(discussion);
         }
 
     }

@@ -1,8 +1,51 @@
-﻿@{
+﻿@model IEnumerable<WarhammerForum.Models.Discussion>
+
+@{
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome 11</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="container">
+    <div class="row">
+        <div class="col-12 mb-4">
+            <h1>Discussions</h1>
+            <a asp-controller="Discussions" asp-action="Create" class="btn btn-primary">Start New Discussion</a>
+        </div>
+    </div>
+
+    <div class="row">
+        @foreach (var item in Model)
+        {
+            <div class="col-12 mb-3">
+                <div class="card">
+                    <div class="row g-0">
+                        <div class="col-md-2">
+                            @if (!string.IsNullOrEmpty(item.ImageFilename))
+                            {
+                                <img src="/images/@item.ImageFilename" class="img-fluid thumbnail" style="max-height: 150px; object-fit: cover;" alt="Discussion image">
+                            }
+                        </div>
+                        <div class="col-md-10">
+                            <div class="card-body">
+                                <h5 class="card-title">
+                                    <a asp-controller="Home" asp-action="GetDiscussion" asp-route-id="@item.DiscussionId">
+                                        @item.Title
+                                    </a>
+                                </h5>
+                                <p class="card-text">
+                                    <small class="text-muted">
+                                        Posted on @item.CreateDate.ToString("MMM dd, yyyy HH:mm")
+                                    </small>
+                                </p>
+                                <p class="card-text">
+                                    <small class="text-muted">
+                                        Comments: @(item.Comments?.Count ?? 0)
+                                    </small>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
 </div>
