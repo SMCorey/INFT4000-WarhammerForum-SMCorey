@@ -39,7 +39,6 @@ namespace WarhammerForum.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("CommentId,Content,DiscussionId")] Comment comment)
         {
-            // initialize the datetime property
             comment.CreateDate = DateTime.Now;
             var tempID = comment.DiscussionId;
 
@@ -47,7 +46,6 @@ namespace WarhammerForum.Controllers
             {
                 _context.Add(comment);
                 await _context.SaveChangesAsync();
-                // Redirect to the GetDiscussion action in HomeController with the discussion ID
                 return RedirectToAction("GetDiscussion", "Home", new { id = comment.DiscussionId });
             }
             ViewData["DiscussionId"] = new SelectList(_context.Discussion, "DiscussionId", "DiscussionId", comment.DiscussionId);
