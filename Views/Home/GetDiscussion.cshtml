@@ -1,49 +1,49 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@model WarhammerForum.Models.Discussion
+﻿@model WarhammerForum.Models.Discussion
 @{
 }
-
 <div class="container">
-    <div class="card mb-4">
-        <div class="card-body">
-            <h1 class="card-title">@Model.Title</h1>
-            <p class="text-muted">Posted on @Model.CreateDate.ToString("MMM dd, yyyy HH:mm")</p>
-
-            @if (!string.IsNullOrEmpty(Model.ImageFilename))
-            {
-                <img src="/images/@Model.ImageFilename" class="img-fluid mb-3" alt="Discussion image">
-            }
-
-            <p class="card-text">@Model.Content</p>
-        </div>
-    </div>
-
-    <div class="mb-4">
-        <h3>Comments</h3>
-        <a asp-controller="Comments" asp-action="Create" asp-route-discussionId="@Model.DiscussionId"
-           class="btn btn-primary mb-3">Add Comment</a>
-
-        @if (Model.Comments != null && Model.Comments.Any())
-        {
-            foreach (var comment in Model.Comments)
-            {
-                <div class="card mb-2">
-                    <div class="card-body">
-                        <p class="card-text">@comment.Content</p>
-                        <p class="card-text">
-                            <small class="text-muted">
-                                Posted on @comment.CreateDate.ToString("MMM dd, yyyy HH:mm")
-                            </small>
-                        </p>
-                    </div>
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <!-- Discussion card --!>
+            <div class="card bg-dark border-secondary mb-4">
+                <div class="card-body">
+                    <h1 class="card-title text-danger">@Model.Title</h1>
+                    <p class="text-light-emphasis">Posted on @Model.CreateDate.ToString("MMM dd, yyyy HH:mm")</p>
+                    @if (!string.IsNullOrEmpty(Model.ImageFilename))
+                    {
+                        <img src="/images/@Model.ImageFilename" class="img-fluid mb-3 rounded-3" alt="Discussion image">
+                    }
+                    <p class="card-text text-light">@Model.Content</p>
                 </div>
-            }
-        }
-        else
-        {
-            <p>No comments yet. Be the first to comment!</p>
-        }
+            </div>
+
+            <!-- Comments Section -->
+            <div class="mb-4">
+                <h3 class="text-light">Comments</h3>
+                <a asp-controller="Comments" asp-action="Create" asp-route-discussionId="@Model.DiscussionId"
+                   class="btn btn-danger mb-3">Add Comment</a>
+
+                @if (Model.Comments != null && Model.Comments.Any())
+                {
+                    foreach (var comment in Model.Comments)
+                    {
+                        <div class="card bg-dark border-secondary mb-2">
+                            <div class="card-body">
+                                <p class="card-text text-light">@comment.Content</p>
+                                <p class="card-text">
+                                    <small class="text-secondary">
+                                        Posted on @comment.CreateDate.ToString("MMM dd, yyyy HH:mm")
+                                    </small>
+                                </p>
+                            </div>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <p class="text-light">No comments yet. Be the first to comment!</p>
+                }
+            </div>
+        </div>
     </div>
 </div>

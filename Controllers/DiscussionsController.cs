@@ -60,7 +60,10 @@ namespace WarhammerForum.Controllers
             discussion.CreateDate = DateTime.Now;
 
             // rename the uploaded file to a guid (unique filename). Set before photo saved in database.
-            discussion.ImageFilename = Guid.NewGuid().ToString() + Path.GetExtension(discussion.ImageFile?.FileName);
+            if (discussion.ImageFile != null)
+            {
+                discussion.ImageFilename = Guid.NewGuid().ToString() + Path.GetExtension(discussion.ImageFile.FileName);
+            }
 
             if (ModelState.IsValid)
             {
@@ -70,6 +73,7 @@ namespace WarhammerForum.Controllers
                 // Save the uploaded file after the photo is saved in the database.
                 if (discussion.ImageFile != null)
                 {
+
                     string filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", discussion.ImageFilename);
 
                     using (var fileStream = new FileStream(filePath, FileMode.Create))

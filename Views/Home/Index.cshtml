@@ -1,43 +1,50 @@
 ﻿@model IEnumerable<WarhammerForum.Models.Discussion>
-
 @{
     ViewData["Title"] = "Home Page";
 }
-
 <div class="container">
-    <div class="row">
-        <div class="col-12 mb-4">
-            <h1>Discussions</h1>
-            <a asp-controller="Discussions" asp-action="Create" class="btn btn-primary">Start New Discussion</a>
+    <!-- Header section -->
+    <div class="row mb-4 justify-content-center">
+        <div class="col-lg-8">
+            <h1 class="text-light">Discussions</h1>
+            <a asp-controller="Discussions" asp-action="Create" class="btn btn-danger">Start New Discussion</a>
         </div>
     </div>
 
-    <div class="row">
-        @foreach (var item in Model)
-        {
-            <div class="col-12 mb-3">
-                <div class="card">
+    <!-- Cards section -->
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            @foreach (var item in Model)
+            {
+                <div class="card bg-dark border-secondary mb-3">
                     <div class="row g-0">
-                        <div class="col-md-2">
+                        <div class="col-md-2 overflow-hidden">
                             @if (!string.IsNullOrEmpty(item.ImageFilename))
                             {
-                                <img src="/images/@item.ImageFilename" class="img-fluid thumbnail" style="max-height: 150px; object-fit: cover;" alt="Discussion image">
+                                <img src="/images/@item.ImageFilename" class="img-fluid thumbnail h-100 rounded-1" style="object-fit: cover;" alt="Discussion image">
+                            }
+                            else
+                            {
+                                <div class="bg-secondary thumbnail h-100 w-100 rounded-1"></div>
                             }
                         </div>
                         <div class="col-md-10">
                             <div class="card-body">
                                 <h5 class="card-title">
-                                    <a asp-controller="Home" asp-action="GetDiscussion" asp-route-id="@item.DiscussionId">
+                                    <a asp-controller="Home"
+                                       asp-action="GetDiscussion"
+                                       asp-route-id="@item.DiscussionId"
+                                       class="text-danger text-decoration-none">
                                         @item.Title
                                     </a>
                                 </h5>
                                 <p class="card-text">
-                                    <small class="text-muted">
+                                    <small class="text-light-emphasis">
                                         Posted on @item.CreateDate.ToString("MMM dd, yyyy HH:mm")
                                     </small>
                                 </p>
                                 <p class="card-text">
-                                    <small class="text-muted">
+                                    <small class="text-light-emphasis">
                                         Comments: @(item.Comments?.Count ?? 0)
                                     </small>
                                 </p>
@@ -45,7 +52,7 @@
                         </div>
                     </div>
                 </div>
-            </div>
-        }
+            }
+        </div>
     </div>
 </div>
