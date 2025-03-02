@@ -1,15 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using WarhammerForum.Data;
 using WarhammerForum.Models;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace WarhammerForum.Controllers
 {
+    [Authorize] // Require authentication for all actions
     public class CommentsController : Controller
     {
         private readonly WarhammerForumContext _context;
@@ -18,10 +17,6 @@ namespace WarhammerForum.Controllers
         {
             _context = context;
         }
-
-        // GET: Comments
-
-        // GET: Comments/Details/5
 
         // GET: Comments/Create
         public IActionResult Create(int discussionId)
@@ -33,14 +28,13 @@ namespace WarhammerForum.Controllers
         }
 
         // POST: Comments/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("CommentId,Content,DiscussionId")] Comment comment)
         {
+            // Set current date and user ID
             comment.CreateDate = DateTime.Now;
-            var tempID = comment.DiscussionId;
+            comment.ApplicationUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
             if (ModelState.IsValid)
             {
@@ -48,17 +42,9 @@ namespace WarhammerForum.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction("GetDiscussion", "Home", new { id = comment.DiscussionId });
             }
+
             ViewData["DiscussionId"] = new SelectList(_context.Discussion, "DiscussionId", "DiscussionId", comment.DiscussionId);
             return View(comment);
         }
-
-        // GET: Comments/Edit/5
-
-        // POST: Comments/Edit/5
-
-        // GET: Comments/Delete/5
-
-        // POST: Comments/Delete/5
-
     }
 }

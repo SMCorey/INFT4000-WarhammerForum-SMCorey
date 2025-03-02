@@ -1,0 +1,89 @@
+﻿@model WarhammerForum.Data.ApplicationUser
+@{
+    ViewData["Title"] = $"{Model.Name}'s Profile";
+    var discussions = ViewData["UserDiscussions"] as List<Discussion>;
+}
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card bg-dark border-secondary mb-4">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3 text-center mb-3">
+                            @if (!string.IsNullOrEmpty(Model.ImageFilename))
+                            {
+                                <img src="/images/@Model.ImageFilename" class="img-fluid rounded-circle" alt="Profile Picture" style="width: 150px; height: 150px; object-fit: cover;">
+                            }
+                            else
+                            {
+                                <img src="/images/default-avatar.png" class="img-fluid rounded-circle" alt="Default Profile Picture" style="width: 150px; height: 150px; object-fit: cover;">
+                            }
+                        </div>
+                        <div class="col-md-9">
+                            <h1 class="text-danger mb-3">@Model.Name</h1>
+
+                            @if (!string.IsNullOrEmpty(Model.Location))
+                            {
+                                <p class="text-light mb-2">
+                                    <i class="bi bi-geo-alt"></i> @Model.Location
+                                </p>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <h2 class="text-light mb-3">Threads Started by @Model.Name</h2>
+
+            @if (discussions != null && discussions.Any())
+            {
+                <div class="mb-4">
+                    @foreach (var item in discussions)
+                    {
+                        <div class="card bg-dark border-secondary mb-3">
+                            <div class="row g-0">
+                                <div class="col-md-2 overflow-hidden">
+                                    @if (!string.IsNullOrEmpty(item.ImageFilename))
+                                    {
+                                        <img src="/images/@item.ImageFilename" class="img-fluid thumbnail h-100 rounded-1" style="object-fit: cover;" alt="Discussion image">
+                                    }
+                                    else
+                                    {
+                                        <div class="bg-secondary thumbnail h-100 w-100 rounded-1"></div>
+                                    }
+                                </div>
+                                <div class="col-md-10">
+                                    <div class="card-body">
+                                        <h5 class="card-title">
+                                            <a asp-controller="Home"
+                                               asp-action="GetDiscussion"
+                                               asp-route-id="@item.DiscussionId"
+                                               class="text-danger text-decoration-none">
+                                                @item.Title
+                                            </a>
+                                        </h5>
+                                        <p class="card-text">
+                                            <small class="text-light-emphasis">
+                                                Posted on @item.CreateDate.ToString("MMM dd, yyyy HH:mm")
+                                            </small>
+                                        </p>
+                                        <p class="card-text">
+                                            <small class="text-light-emphasis">
+                                                Comments: @(item.Comments?.Count ?? 0)
+                                            </small>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+            else
+            {
+                <p class="text-light">This user hasn't started any discussions yet.</p>
+            }
+        </div>
+    </div>
+</div>

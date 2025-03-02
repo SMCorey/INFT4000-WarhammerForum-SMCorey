@@ -1,4 +1,6 @@
-﻿namespace WarhammerForum.Models
+﻿using WarhammerForum.Data;
+
+namespace WarhammerForum.Models
 {
     public class Comment
     {
@@ -9,9 +11,15 @@
 
         public DateTime CreateDate { get; set; }
         
-        // Foreign key
+        // Foreign key (Discussion table)
         public int DiscussionId { get; set; }
-
+        // Navigation Property
         public Discussion? Discussion { get; set; }
+
+        //Foreign key(AspNetUsers table)
+        public string ApplicationUserId { get; set; } = string.Empty;
+
+        // Navigation Property
+        public ApplicationUser? ApplicationUser { get; set; } // NULLABLE
     }
 }

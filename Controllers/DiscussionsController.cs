@@ -1,28 +1,34 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using WarhammerForum.Data;
 using WarhammerForum.Models;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using System.Security.Claims;
 
 namespace WarhammerForum.Controllers
 {
+    [Authorize] // This makes the entire controller require authentication
     public class DiscussionsController : Controller
     {
         private readonly WarhammerForumContext _context;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public DiscussionsController(WarhammerForumContext context)
+        public DiscussionsController(WarhammerForumContext context, UserManager<ApplicationUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         // GET: Discussions
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Discussion.ToListAsync());
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            return View(await _context.Discussion
+                .Where(d => d.ApplicationUserId == userId)
+                .OrderByDescending(d => d.CreateDate)
+                .ToListAsync());
         }
 
         // GET: Discussions/Details/5
@@ -34,10 +40,19 @@ namespace WarhammerForum.Controllers
             }
 
             var discussion = await _context.Discussion
+                .Include(d => d.ApplicationUser)
                 .FirstOrDefaultAsync(m => m.DiscussionId == id);
+
             if (discussion == null)
             {
                 return NotFound();
+            }
+
+            // Check if user owns this discussion
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (discussion.ApplicationUserId != userId)
+            {
+                return RedirectToAction("AccessDenied", "Account", new { area = "Identity" });
             }
 
             return View(discussion);
@@ -50,14 +65,14 @@ namespace WarhammerForum.Controllers
         }
 
         // POST: Discussions/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("DiscussionId,Title,Content,ImageFile")] Discussion discussion)
         {
             // initialize the datetime property
             discussion.CreateDate = DateTime.Now;
+            // Set the current user ID
+            discussion.ApplicationUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
             // rename the uploaded file to a guid (unique filename). Set before photo saved in database.
             if (discussion.ImageFile != null)
@@ -73,7 +88,6 @@ namespace WarhammerForum.Controllers
                 // Save the uploaded file after the photo is saved in the database.
                 if (discussion.ImageFile != null)
                 {
-
                     string filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", discussion.ImageFilename);
 
                     using (var fileStream = new FileStream(filePath, FileMode.Create))
@@ -100,19 +114,32 @@ namespace WarhammerForum.Controllers
             {
                 return NotFound();
             }
+
+            // Check if user owns this discussion
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (discussion.ApplicationUserId != userId)
+            {
+                return RedirectToAction("AccessDenied", "Account", new { area = "Identity" });
+            }
+
             return View(discussion);
         }
 
         // POST: Discussions/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("DiscussionId,Title,Content,ImageFilename,CreateDate")] Discussion discussion)
+        public async Task<IActionResult> Edit(int id, [Bind("DiscussionId,Title,Content,ImageFilename,CreateDate,ApplicationUserId")] Discussion discussion)
         {
             if (id != discussion.DiscussionId)
             {
                 return NotFound();
+            }
+
+            // Check if user owns this discussion
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (discussion.ApplicationUserId != userId)
+            {
+                return RedirectToAction("AccessDenied", "Account", new { area = "Identity" });
             }
 
             if (ModelState.IsValid)
@@ -148,9 +175,17 @@ namespace WarhammerForum.Controllers
 
             var discussion = await _context.Discussion
                 .FirstOrDefaultAsync(m => m.DiscussionId == id);
+
             if (discussion == null)
             {
                 return NotFound();
+            }
+
+            // Check if user owns this discussion
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (discussion.ApplicationUserId != userId)
+            {
+                return RedirectToAction("AccessDenied", "Account", new { area = "Identity" });
             }
 
             return View(discussion);
@@ -164,6 +199,13 @@ namespace WarhammerForum.Controllers
             var discussion = await _context.Discussion.FindAsync(id);
             if (discussion != null)
             {
+                // Check if user owns this discussion
+                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                if (discussion.ApplicationUserId != userId)
+                {
+                    return RedirectToAction("AccessDenied", "Account", new { area = "Identity" });
+                }
+
                 _context.Discussion.Remove(discussion);
             }
 
