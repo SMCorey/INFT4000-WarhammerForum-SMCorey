@@ -71,6 +71,24 @@ namespace WarhammerForum.Areas.Identity.Pages.Account
         /// </summary>
         public class InputModel
         {
+
+            //////////////////////////////////////
+            // BEGIN ApplicationUser Custom Fields
+            //////////////////////////////////////
+
+            [Required]
+            [Display(Name = "Name or Handle")]
+            public string Name { get; set; }
+
+            public string Location { get; set; }
+
+            [Display(Name = "Profile Picture")]
+            public IFormFile ImageFile { get; set; }
+
+            //////////////////////////////////////
+            /// END ApplicationUser Custom Fields
+            /////////////////////////////////////
+
             /// <summary>
             ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
             ///     directly from your code. This API may change or be removed in future releases.
@@ -114,6 +132,32 @@ namespace WarhammerForum.Areas.Identity.Pages.Account
             if (ModelState.IsValid)
             {
                 var user = CreateUser();
+
+                ///////////////////////////////////////
+                // BEGIN: ApplicationUser Custom Fields
+                ///////////////////////////////////////
+
+                user.Name = Input.Name;
+                user.Location = Input.Location;
+
+                // Save the profile picture                
+                if (Input.ImageFile != null)
+                {
+                    string imageFilename = Guid.NewGuid().ToString() + Path.GetExtension(Input.ImageFile.FileName);
+
+                    string filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "profile_img", imageFilename);
+
+                    using (var fileStream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await Input.ImageFile.CopyToAsync(fileStream);
+                    }
+
+                    user.ImageFilename = imageFilename;
+                }
+
+                /////////////////////////////////////
+                // END: ApplicationUser Custom Fields
+                /////////////////////////////////////
 
                 await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);

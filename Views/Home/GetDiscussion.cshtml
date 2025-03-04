@@ -1,14 +1,47 @@
 ﻿@model WarhammerForum.Models.Discussion
 @{
+    ViewData["Title"] = Model.Title;
 }
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-lg-8">
-            <!-- Discussion card --!>
+            <!-- Discussion card -->
             <div class="card bg-dark border-secondary mb-4">
                 <div class="card-body">
-                    <h1 class="card-title text-danger">@Model.Title</h1>
-                    <p class="text-light-emphasis">Posted on @Model.CreateDate.ToString("MMM dd, yyyy HH:mm")</p>
+                    <div class="d-flex align-items-center mb-3">
+                        @if (Model.ApplicationUser != null)
+                        {
+                            <div class="me-3">
+                                @if (!string.IsNullOrEmpty(Model.ApplicationUser.ImageFilename))
+                                {
+                                    <img src="/profile_img/@Model.ApplicationUser.ImageFilename" class="rounded-circle" width="50" height="50" style="object-fit: cover;" alt="User Avatar">
+                                }
+                                else
+                                {
+                                    <img src="/assets/default_avatar.png" class="rounded-circle" width="50" height="50" style="object-fit: cover;" alt="Default Avatar">
+                                }
+                            </div>
+                            <div>
+                                <h1 class="card-title text-danger mb-0">@Model.Title</h1>
+                                <p class="text-light-emphasis mb-0">
+                                    Posted by
+                                    <a asp-controller="Home" asp-action="Profile" asp-route-id="@Model.ApplicationUserId" class="text-light">
+                                        @Model.ApplicationUser.Name</a>
+                                   on @Model.CreateDate.ToString("MMM dd, yyyy HH:mm")
+                                </p>
+                            </div>
+                        }
+                        else
+                        {
+                            <div>
+                                <h1 class="card-title text-danger mb-0">@Model.Title</h1>
+                                <p class="text-light-emphasis mb-0">
+                                    Posted by Unknown User on @Model.CreateDate.ToString("MMM dd, yyyy HH:mm")
+                                </p>
+                            </div>
+                        }
+                    </div>
+
                     @if (!string.IsNullOrEmpty(Model.ImageFilename))
                     {
                         <img src="/images/@Model.ImageFilename" class="img-fluid mb-3 rounded-3" alt="Discussion image">
@@ -29,12 +62,39 @@
                     {
                         <div class="card bg-dark border-secondary mb-2">
                             <div class="card-body">
+                                <div class="d-flex mb-2">
+                                    @if (comment.ApplicationUser != null)
+                                    {
+                                        <div class="me-2">
+                                            @if (!string.IsNullOrEmpty(comment.ApplicationUser.ImageFilename))
+                                            {
+                                                <img src="/profile_img/@comment.ApplicationUser.ImageFilename" class="rounded-circle" width="30" height="30" style="object-fit: cover;" alt="User Avatar">
+                                            }
+                                            else
+                                            {
+                                                <img src="/assets/default_avatar.png" class="rounded-circle" width="30" height="30" style="object-fit: cover;" alt="Default Avatar">
+                                            }
+                                        </div>
+                                        <div>
+                                            <a asp-controller="Home" asp-action="Profile" asp-route-id="@comment.ApplicationUserId" class="text-light">
+                                                @comment.ApplicationUser.Name
+                                            </a>
+                                            <small class="text-secondary d-block">
+                                                @comment.CreateDate.ToString("MMM dd, yyyy HH:mm")
+                                            </small>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div>
+                                            <span class="text-light">Unknown User</span>
+                                            <small class="text-secondary d-block">
+                                                @comment.CreateDate.ToString("MMM dd, yyyy HH:mm")
+                                            </small>
+                                        </div>
+                                    }
+                                </div>
                                 <p class="card-text text-light">@comment.Content</p>
-                                <p class="card-text">
-                                    <small class="text-secondary">
-                                        Posted on @comment.CreateDate.ToString("MMM dd, yyyy HH:mm")
-                                    </small>
-                                </p>
                             </div>
                         </div>
                     }

@@ -13,11 +13,11 @@
                         <div class="col-md-3 text-center mb-3">
                             @if (!string.IsNullOrEmpty(Model.ImageFilename))
                             {
-                                <img src="/images/@Model.ImageFilename" class="img-fluid rounded-circle" alt="Profile Picture" style="width: 150px; height: 150px; object-fit: cover;">
+                                <img src="/profile_img/@Model.ImageFilename" class="img-fluid rounded-circle" alt="Profile Picture" style="width: 150px; height: 150px; object-fit: cover;">
                             }
                             else
                             {
-                                <img src="/images/default-avatar.png" class="img-fluid rounded-circle" alt="Default Profile Picture" style="width: 150px; height: 150px; object-fit: cover;">
+                                <img src="/assets/default_avatar.png" class="img-fluid rounded-circle" alt="Default Profile Picture" style="width: 150px; height: 150px; object-fit: cover;">
                             }
                         </div>
                         <div class="col-md-9">

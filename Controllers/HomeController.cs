@@ -21,13 +21,13 @@ namespace WarhammerForum.Controllers
 
         public async Task<IActionResult> Index()
         {
-            // get all discussions with their authors
+            // Get all discussions with their authors
             var discussions = await _context.Discussion
                 .Include(d => d.Comments)
                 .Include(d => d.ApplicationUser)
                 .OrderByDescending(d => d.CreateDate)
                 .ToListAsync();
-            return View(discussions); // pass discussions to list view
+            return View(discussions);
         }
 
         public async Task<IActionResult> GetDiscussion(int id)

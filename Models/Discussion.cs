@@ -10,6 +10,8 @@ namespace WarhammerForum.Models
         public string Title { get; set; } = string.Empty;
         public string Content { get; set; } = string.Empty;
         public string ImageFilename { get; set; } = string.Empty ;
+
+        [Display(Name = "Created On")]
         public DateTime CreateDate { get; set; }
 
         // Navigation Property

@@ -40,7 +40,19 @@
                                 </h5>
                                 <p class="card-text">
                                     <small class="text-light-emphasis">
-                                        Posted on @item.CreateDate.ToString("MMM dd, yyyy HH:mm")
+                                        Posted by 
+                                        @if (item.ApplicationUser != null)
+                                        {
+                                            <a asp-controller="Home" 
+                                               asp-action="Profile" 
+                                               asp-route-id="@item.ApplicationUserId"
+                                               class="text-light">@item.ApplicationUser.Name</a>
+                                        }
+                                        else
+                                        {
+                                            <span>Unknown User</span>
+                                        }
+                                        on @item.CreateDate.ToString("MMM dd, yyyy HH:mm")
                                     </small>
                                 </p>
                                 <p class="card-text">

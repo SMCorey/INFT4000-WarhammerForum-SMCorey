@@ -11,7 +11,7 @@
 
     <style>
         body {
-            background-image: url('/images/chaos_planet.webp');
+            background-image: url('/assets/chaos_planet.webp');
             background-position: center;
             background-repeat: no-repeat;
             background-size: cover;
@@ -31,7 +31,7 @@
         <nav class="navbar navbar-expand-sm navbar-dark bg-dark border-bottom box-shadow mb-3">
             <div class="container-fluid">
                 <a class="navbar-brand d-flex align-items-center" asp-area="" asp-controller="Home" asp-action="Index">
-                    <img src="/images/40k_logo.svg" alt="Warhammer 40K Logo" class="warhammer-logo" />
+                    <img src="/assets/mechanicus_logo.svg" alt="Warhammer 40K Logo" class="warhammer-logo" />
                     <span>Warhammer Forum</span>
                 </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
@@ -42,9 +42,9 @@
                     <ul class="navbar-nav flex-grow-1">
                         @if (User.Identity.IsAuthenticated)
                         {
-                            <li class="nav-item">
-                                <a class="nav-link text-light" asp-area="" asp-controller="Discussions" asp-action="Index">My Threads</a>
-                            </li>
+                            @* <li class="nav-item"> *@
+                            @*     <a class="nav-link text-light" asp-area="" asp-controller="Discussions" asp-action="Index">My Threads</a> *@
+                            @* </li> *@
                         }
                     </ul>
                     <partial name="_LoginPartial" />
