@@ -1,55 +1,108 @@
 ﻿@model WarhammerForum.Models.Discussion
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Create Discussion";
 }
 
-<h1>Create</h1>
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <h1 class="text-light mb-4">Create Discussion</h1>
 
-<h4>Discussion</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create" enctype="multipart/form-data">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Title" class="control-label"></label>
-                <input asp-for="Title" class="form-control" />
-                <span asp-validation-for="Title" class="text-danger"></span>
+            <div class="card bg-dark border-secondary mb-4">
+                <div class="card-body">
+                    <form asp-action="Create" enctype="multipart/form-data">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                        <div class="mb-4">
+                            <label asp-for="Title" class="form-label text-light">Title</label>
+                            <input asp-for="Title" class="form-control" />
+                            <span asp-validation-for="Title" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="Content" class="form-label text-light">Content</label>
+                            <textarea asp-for="Content" class="form-control" rows="6"></textarea>
+                            <span asp-validation-for="Content" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label text-light">Image Preview</label>
+                            <div id="previewContainer" class="mb-3 d-none">
+                                <div class="position-relative">
+                                    <img id="imagePreview" src="" class="img-fluid rounded" style="max-height: 200px;" alt="Image preview">
+                                    <button type="button" id="removeImageBtn" class="btn btn-sm btn-danger position-absolute" style="top: 10px; right: 10px;">
+                                        <i class="bi bi-x"></i> Remove
+                                    </button>
+                                </div>
+                            </div>
+                            <div id="noImageMessage" class="text-muted mb-3">
+                                No image selected
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="ImageFile" class="form-label text-light">Discussion Image</label>
+                            <input type="file" asp-for="ImageFile" class="form-control" id="imageInput" accept="image/*" />
+                            <small class="form-text text-muted">Optional: Add an image to your discussion</small>
+                            <span asp-validation-for="ImageFile" class="text-danger"></span>
+                        </div>
+
+                        <div class="d-flex justify-content-between mt-4">
+                            <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+                            <button type="submit" class="btn btn-danger">Create</button>
+                        </div>
+                    </form>
+                </div>
             </div>
-            <div class="form-group">
-                <label asp-for="Content" class="control-label"></label>
-                <input asp-for="Content" class="form-control" />
-                <span asp-validation-for="Content" class="text-danger"></span>
-            </div>
-            <div class="mb-3">
-                <label asp-for="ImageFile" class="form-label"></label>
-                <input type="file" asp-for="ImageFile" class="form-control" />
-                <span asp-validation-for="ImageFile" class="text-danger"></span>
-            </div>
-            @* <div class="form-group"> *@
-            @*     <label asp-for="ImageFilename" class="control-label"></label> *@
-            @*     <input asp-for="ImageFilename" class="form-control" /> *@
-            @*     <span asp-validation-for="ImageFilename" class="text-danger"></span> *@
-            @* </div> *@
-            @* <div class="form-group">
-            @*     <label asp-for="CreateDate" class="control-label"></label> *@
-            @*     <input asp-for="CreateDate" class="form-control" /> *@
-            @*     <span asp-validation-for="CreateDate" class="text-danger"></span> *@
-            @* </div> *@
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
-        </form>
+        </div>
     </div>
-</div>
-
-<div>
-    <a asp-action="Index">Back to List</a>
 </div>
 
 @section Scripts {
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
+
+    @* Image preview functionality provided by AI *@
+    <script>
+        // Image preview functionality
+        const imageInput = document.getElementById('imageInput');
+        const previewContainer = document.getElementById('previewContainer');
+        const noImageMessage = document.getElementById('noImageMessage');
+        const imagePreview = document.getElementById('imagePreview');
+        const removeImageBtn = document.getElementById('removeImageBtn');
+
+        // Handle image selection
+        imageInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+
+            if (file) {
+                const reader = new FileReader();
+
+                reader.onload = function(e) {
+                    imagePreview.src = e.target.result;
+                    previewContainer.classList.remove('d-none');
+                    noImageMessage.classList.add('d-none');
+                }
+
+                reader.readAsDataURL(file);
+            } else {
+                clearImagePreview();
+            }
+        });
+
+        // Handle remove image button click
+        removeImageBtn.addEventListener('click', function() {
+            clearImagePreview();
+            // Clear the file input
+            imageInput.value = '';
+        });
+
+        function clearImagePreview() {
+            previewContainer.classList.add('d-none');
+            noImageMessage.classList.remove('d-none');
+            imagePreview.src = '';
+        }
+    </script>
 }

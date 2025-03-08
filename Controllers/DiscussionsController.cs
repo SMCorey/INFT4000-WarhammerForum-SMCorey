@@ -128,7 +128,7 @@ namespace WarhammerForum.Controllers
         // POST: Discussions/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("DiscussionId,Title,Content,ImageFilename,CreateDate,ApplicationUserId")] Discussion discussion)
+        public async Task<IActionResult> Edit(int id, [Bind("DiscussionId,Title,Content,ImageFilename,CreateDate,ApplicationUserId,ImageFile")] Discussion discussion)
         {
             if (id != discussion.DiscussionId)
             {
@@ -146,6 +146,33 @@ namespace WarhammerForum.Controllers
             {
                 try
                 {
+                    // Handle image update
+                    if (discussion.ImageFile != null)
+                    {
+                        // Delete the old image if it exists
+                        if (!string.IsNullOrEmpty(discussion.ImageFilename))
+                        {
+                            string oldImagePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", discussion.ImageFilename);
+                            if (System.IO.File.Exists(oldImagePath))
+                            {
+                                System.IO.File.Delete(oldImagePath);
+                            }
+                        }
+
+                        // Create a new unique filename for the new image
+                        string newImageFilename = Guid.NewGuid().ToString() + Path.GetExtension(discussion.ImageFile.FileName);
+
+                        // Save the new file
+                        string newImagePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", newImageFilename);
+                        using (var fileStream = new FileStream(newImagePath, FileMode.Create))
+                        {
+                            await discussion.ImageFile.CopyToAsync(fileStream);
+                        }
+
+                        // Update the filename in the model
+                        discussion.ImageFilename = newImageFilename;
+                    }
+
                     _context.Update(discussion);
                     await _context.SaveChangesAsync();
                 }

@@ -26,8 +26,9 @@
                                 <p class="text-light-emphasis mb-0">
                                     Posted by
                                     <a asp-controller="Home" asp-action="Profile" asp-route-id="@Model.ApplicationUserId" class="text-light">
-                                        @Model.ApplicationUser.Name</a>
-                                   on @Model.CreateDate.ToString("MMM dd, yyyy HH:mm")
+                                        @Model.ApplicationUser.Name
+                                    </a>
+                                    on @Model.CreateDate.ToString("MMM dd, yyyy HH:mm")
                                 </p>
                             </div>
                         }
@@ -44,7 +45,9 @@
 
                     @if (!string.IsNullOrEmpty(Model.ImageFilename))
                     {
-                        <img src="/images/@Model.ImageFilename" class="img-fluid mb-3 rounded-3" alt="Discussion image">
+                        <div class="text-center mb-3">
+                            <img src="/images/@Model.ImageFilename" class="img-fluid rounded-3" style="max-height: 500px;" alt="Discussion image">
+                        </div>
                     }
                     <p class="card-text text-light">@Model.Content</p>
                 </div>

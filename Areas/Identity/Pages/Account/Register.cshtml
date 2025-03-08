@@ -3,52 +3,127 @@
 @{
     ViewData["Title"] = "Register";
 }
-<h1>@ViewData["Title"]</h1>
-<div class="row">
-    <div class="col-md-4">
-        <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post" enctype="multipart/form-data">
-            <h2>Create a new account.</h2>
-            <hr />
-            <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
-            <div class="form-floating mb-3">
-                <input asp-for="Input.Email" class="form-control" autocomplete="username" aria-required="true" placeholder="name@example.com" />
-                <label asp-for="Input.Email">Email</label>
-                <span asp-validation-for="Input.Email" class="text-danger"></span>
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <h1 class="text-light mb-4">Register</h1>
+
+            <div class="card bg-dark border-secondary mb-4">
+                <div class="card-body">
+                    <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post" enctype="multipart/form-data">
+                        <h4 class="mb-3 text-light">Create a new account</h4>
+                        <hr class="mb-4" />
+
+                        <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+
+                        <div class="form-floating mb-4">
+                            <input asp-for="Input.Email" class="form-control" autocomplete="username" aria-required="true" placeholder="name@example.com" />
+                            <label asp-for="Input.Email">Email</label>
+                            <span asp-validation-for="Input.Email" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-floating mb-4">
+                            <input asp-for="Input.Name" class="form-control" aria-required="true" placeholder="Your name" />
+                            <label asp-for="Input.Name">Name</label>
+                            <span asp-validation-for="Input.Name" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-floating mb-4">
+                            <input asp-for="Input.Location" class="form-control" placeholder="Your location" />
+                            <label asp-for="Input.Location">Location</label>
+                            <span asp-validation-for="Input.Location" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label text-light">Profile Picture Preview</label>
+                            <div id="previewContainer" class="mb-3 d-none position-relative">
+                                <img id="imagePreview" src="" class="img-fluid rounded-circle" style="max-height: 150px; max-width: 150px; object-fit: cover;" alt="Profile picture preview">
+                                <button type="button" id="removeImageBtn" class="btn btn-sm btn-danger position-absolute" style="top: 5px; right: 5px;">
+                                    Remove
+                                </button>
+                            </div>
+                            <div id="noImageMessage" class="text-muted mb-3">
+                                No profile picture selected
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="Input.ImageFile" class="form-label text-light">Profile Picture</label>
+                            <input asp-for="Input.ImageFile" type="file" id="imageInput" class="form-control" accept="image/*" />
+                            <small class="form-text text-muted">Optional: Upload a profile picture</small>
+                            <span asp-validation-for="Input.ImageFile" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-floating mb-4">
+                            <input asp-for="Input.Password" class="form-control" autocomplete="new-password" aria-required="true" placeholder="password" />
+                            <label asp-for="Input.Password">Password</label>
+                            <span asp-validation-for="Input.Password" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-floating mb-4">
+                            <input asp-for="Input.ConfirmPassword" class="form-control" autocomplete="new-password" aria-required="true" placeholder="password" />
+                            <label asp-for="Input.ConfirmPassword">Confirm Password</label>
+                            <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
+                        </div>
+
+                        <div class="d-grid">
+                            <button id="registerSubmit" type="submit" class="btn btn-lg btn-danger">Register</button>
+                        </div>
+                    </form>
+                </div>
             </div>
 
-            @* Custom fields start*@
-            <div class="form-floating mb-3">
-                <input asp-for="Input.Name" class="form-control" aria-required="true" placeholder="Your name" />
-                <label asp-for="Input.Name">Name</label>
-                <span asp-validation-for="Input.Name" class="text-danger"></span>
+            <div class="text-center">
+                <p class="text-light">
+                    Already have an account? <a asp-page="./Login" asp-route-returnUrl="@Model.ReturnUrl" class="text-danger">Log in</a>
+                </p>
             </div>
-            <div class="form-floating mb-3">
-                <input asp-for="Input.Location" class="form-control" placeholder="Your location" />
-                <label asp-for="Input.Location">Location</label>
-                <span asp-validation-for="Input.Location" class="text-danger"></span>
-            </div>
-            <div class="mb-3">
-                <label asp-for="Input.ImageFile" class="form-label">Profile Picture</label>
-                <input asp-for="Input.ImageFile" type="file" class="form-control" />
-                <span asp-validation-for="Input.ImageFile" class="text-danger"></span>
-            </div>
-            @* Custom fields end *@
-
-            <div class="form-floating mb-3">
-                <input asp-for="Input.Password" class="form-control" autocomplete="new-password" aria-required="true" placeholder="password" />
-                <label asp-for="Input.Password">Password</label>
-                <span asp-validation-for="Input.Password" class="text-danger"></span>
-            </div>
-            <div class="form-floating mb-3">
-                <input asp-for="Input.ConfirmPassword" class="form-control" autocomplete="new-password" aria-required="true" placeholder="password" />
-                <label asp-for="Input.ConfirmPassword">Confirm Password</label>
-                <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
-            </div>
-            <button id="registerSubmit" type="submit" class="w-100 btn btn-lg btn-primary">Register</button>
-        </form>
+        </div>
     </div>
 </div>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+
+        @* // Image preview functionality provided by AI *@
+    <script>
+        const imageInput = document.getElementById('imageInput');
+        const previewContainer = document.getElementById('previewContainer');
+        const noImageMessage = document.getElementById('noImageMessage');
+        const imagePreview = document.getElementById('imagePreview');
+        const removeImageBtn = document.getElementById('removeImageBtn');
+
+        // Handle image selection
+        imageInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+
+            if (file) {
+                const reader = new FileReader();
+
+                reader.onload = function(e) {
+                    imagePreview.src = e.target.result;
+                    previewContainer.classList.remove('d-none');
+                    noImageMessage.classList.add('d-none');
+                }
+
+                reader.readAsDataURL(file);
+            } else {
+                clearImagePreview();
+            }
+        });
+
+        // Handle remove image button click
+        removeImageBtn.addEventListener('click', function() {
+            clearImagePreview();
+            // Clear the file input
+            imageInput.value = '';
+        });
+
+        function clearImagePreview() {
+            previewContainer.classList.add('d-none');
+            noImageMessage.classList.remove('d-none');
+            imagePreview.src = '';
+        }
+    </script>
 }
